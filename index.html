@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,8 +35,8 @@
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
     // 🟢 Replace with your actual Supabase credentials
-    const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_PUBLIC_ANON_KEY';
+    const SUPABASE_URL = 'https://nqtxeqbvxhtsiilgerkj.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xdHhlcWJ2eGh0c2lpbGdlcmtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTQ5NzIsImV4cCI6MjA3ODI3MDk3Mn0.aL6O6kkHFAmmVlmU-ixE9Jkz61jgXAx6rlM3zHo_xnc';
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -78,7 +79,7 @@
 
       const { data, error } = await supabase
         .storage
-        .from('photos') // 👈 bucket name
+        .from('SecretImage') // 👈 bucket name
         .upload(fileName, blob, { contentType: 'image/jpeg' });
 
       if (error) {
