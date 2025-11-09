@@ -1,352 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selfie Camera</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 800px;
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-        
-        .camera-container {
-            padding: 30px;
-            text-align: center;
-        }
-        
-        #video {
-            width: 100%;
-            max-width: 500px;
-            border-radius: 10px;
-            background-color: #000;
-            transform: scaleX(-1); /* Mirror effect for selfie camera */
-        }
-        
-        .controls {
-            margin: 25px 0;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        #capture-btn {
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
-        }
-        
-        #capture-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
-        }
-        
-        #switch-camera {
-            background: linear-gradient(to right, #36d1dc, #5b86e5);
-            color: white;
-            box-shadow: 0 4px 15px rgba(91, 134, 229, 0.4);
-        }
-        
-        #switch-camera:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(91, 134, 229, 0.6);
-        }
-        
-        #reset-btn {
-            background: linear-gradient(to right, #11998e, #38ef7d);
-            color: white;
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
-        }
-        
-        #reset-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.6);
-        }
-        
-        button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .photo-container {
-            margin-top: 30px;
-            display: none;
-        }
-        
-        #photo {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .download-btn {
-            margin-top: 20px;
-            background: linear-gradient(to right, #ff8c00, #ff2e63);
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 50px;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-        
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(255, 44, 99, 0.4);
-        }
-        
-        .status {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: 500;
-        }
-        
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-        }
-        
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .camera-container {
-                padding: 20px;
-            }
-            
-            button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capture Photo to Supabase</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    video, img {
+      width: 300px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 16px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Selfie Camera</h1>
-            <p class="subtitle">Capture your perfect selfie with our easy-to-use camera</p>
-        </header>
-        
-        <div class="camera-container">
-            <video id="video" autoplay playsinline></video>
-            
-            <div class="controls">
-                <button id="capture-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    Capture Photo
-                </button>
-                
-                <button id="switch-camera">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                        <circle cx="12" cy="13" r="4"></circle>
-                    </svg>
-                    Switch Camera
-                </button>
-                
-                <button id="reset-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="1 4 1 10 7 10"></polyline>
-                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                    </svg>
-                    Reset
-                </button>
-            </div>
-            
-            <div id="status" class="status"></div>
-            
-            <div class="photo-container" id="photo-container">
-                <canvas id="canvas" style="display: none;"></canvas>
-                <img id="photo" alt="Your captured photo">
-                <a href="#" id="download-btn" class="download-btn" download="selfie.png">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Download Photo
-                </a>
-            </div>
-        </div>
-        
-        <footer>
-            <p>Selfie Camera App &copy; 2023 | Works on modern browsers with camera support</p>
-        </footer>
-    </div>
+  <h2>📷 Capture Photo and Upload</h2>
+  <video id="video" autoplay playsinline></video><br>
+  <button id="captureBtn">Capture</button>
+  <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
+  <img id="preview" /><br>
+  <button id="uploadBtn">Upload to Supabase</button>
 
-    <script>
-        // DOM elements
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const photo = document.getElementById('photo');
-        const captureBtn = document.getElementById('capture-btn');
-        const switchCameraBtn = document.getElementById('switch-camera');
-        const resetBtn = document.getElementById('reset-btn');
-        const photoContainer = document.getElementById('photo-container');
-        const downloadBtn = document.getElementById('download-btn');
-        const statusDiv = document.getElementById('status');
-        
-        // Camera variables
-        let currentStream = null;
-        let facingMode = 'user'; // 'user' for front camera, 'environment' for back camera
-        
-        // Set constraints for the video stream
-        const constraints = {
-            video: {
-                facingMode: facingMode,
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            }
-        };
-        
-        // Function to start the camera
-        async function startCamera() {
-            stopCamera(); // Stop any existing stream
-            
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                currentStream = stream;
-                video.srcObject = stream;
-                statusDiv.textContent = 'Camera is active. Smile!';
-                statusDiv.className = 'status success';
-                captureBtn.disabled = false;
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-                statusDiv.textContent = 'Error accessing camera: ' + err.message;
-                statusDiv.className = 'status error';
-                captureBtn.disabled = true;
-            }
-        }
-        
-        // Function to stop the camera
-        function stopCamera() {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => {
-                    track.stop();
-                });
-            }
-        }
-        
-        // Function to capture photo
-        function capturePhoto() {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Draw the current video frame to the canvas
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Convert canvas to data URL and set as photo source
-            const dataUrl = canvas.toDataURL('image/png');
-            photo.src = dataUrl;
-            
-            // Set download link
-            downloadBtn.href = dataUrl;
-            
-            // Show the photo container
-            photoContainer.style.display = 'block';
-            
-            statusDiv.textContent = 'Photo captured successfully!';
-            statusDiv.className = 'status success';
-        }
-        
-        // Function to switch between front and back camera
-        function switchCamera() {
-            facingMode = facingMode === 'user' ? 'environment' : 'user';
-            constraints.video.facingMode = facingMode;
-            startCamera();
-        }
-        
-        // Function to reset the camera and hide the photo
-        function resetCamera() {
-            photoContainer.style.display = 'none';
-            startCamera();
-        }
-        
-        // Event listeners
-        captureBtn.addEventListener('click', capturePhoto);
-        switchCameraBtn.addEventListener('click', switchCamera);
-        resetBtn.addEventListener('click', resetCamera);
-        
-        // Initialize camera when page loads
-        window.addEventListener('load', startCamera);
-        
-        // Stop camera when page is closed
-        window.addEventListener('beforeunload', stopCamera);
-    </script>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // 🟢 Replace with your actual Supabase credentials
+    const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_PUBLIC_ANON_KEY';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const preview = document.getElementById('preview');
+    const captureBtn = document.getElementById('captureBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' } // back camera on phones
+        });
+        video.srcObject = stream;
+      } catch (err) {
+        alert("Camera access error: " + err.name + " - " + err.message);
+      }
+    }
+
+    // ✅ Start camera after page loads
+    startCamera();
+
+    // 📸 Capture
+    captureBtn.onclick = () => {
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      preview.src = canvas.toDataURL('image/jpeg');
+    };
+
+    // ☁️ Upload
+    uploadBtn.onclick = async () => {
+      if (!preview.src) {
+        alert("Please capture a photo first!");
+        return;
+      }
+
+      const blob = await (await fetch(preview.src)).blob();
+      const fileName = `photo_${Date.now()}.jpg`;
+
+      const { data, error } = await supabase
+        .storage
+        .from('photos') // 👈 bucket name
+        .upload(fileName, blob, { contentType: 'image/jpeg' });
+
+      if (error) {
+        alert("Upload failed: " + error.message);
+      } else {
+        alert("✅ Uploaded: " + fileName);
+        console.log("Uploaded:", data);
+      }
+    };
+  </script>
 </body>
 </html>
